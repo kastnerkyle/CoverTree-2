@@ -15,7 +15,10 @@
 from random import choice
 from heapq import nsmallest
 from itertools import product
-from collections import Counter
+try:
+    from collections import Counter
+except ImportError: # Counter is not available in Python before v2.7
+    from recipe_576611_1 import Counter
 from joblib import Parallel, delayed
 import cStringIO
 
