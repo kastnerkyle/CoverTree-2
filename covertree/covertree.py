@@ -19,7 +19,10 @@ try:
     from collections import Counter
 except ImportError: # Counter is not available in Python before v2.7
     from recipe_576611_1 import Counter
-from joblib import Parallel, delayed
+try:
+    from joblib import Parallel, delayed
+except ImportError:
+    pass
 import cStringIO
 
 # method that returns true iff only one element of the container is True
@@ -275,7 +278,7 @@ class CoverTree:
     #
     def _getChildrenDist_(self, p, Qi_p_ds, i):
         Q = sum([n.getOnlyChildren(i) for n, _ in Qi_p_ds], [])
-        if self.jobs > 1 and len(Q) >= self.min_len_parallel:
+        if 'Parallel' in dir() and self.jobs > 1 and len(Q) >= self.min_len_parallel:
             df = self.distance
             ds = Parallel(n_jobs = self.jobs)(delayed(df)(p, q.data) for q in Q)
             Q_p_ds = zip(Q, ds)
