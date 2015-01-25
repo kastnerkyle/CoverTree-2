@@ -12,8 +12,8 @@ def read(fname):
 setup(
     name = "covertree",
     version = "0.1",
-    author = "Thomas Kollar",
-    author_email = "tkollar@csail.mit.edu",
+    author = "Thomas Kollar, Badi Abdul-Wahid",
+    author_email = "tkollar@csail.mit.edu, abdulwahidc@gmail.com",
     description = ("Python library of cover tree (http://hunch.net/~jl/projects/cover_tree/cover_tree.html) for fast nearest neighbor querying."),
     license = "BSD",
     keywords = "cover tree nearest neighbor",
