@@ -122,46 +122,6 @@ class CoverTree:
         else:
             self.insert_iter(p)
 
-            
-    #
-    # Overview: behaves like knn(p, k) and insert(p). This method
-    # exists for efficiency reason
-    #
-    # Input: point p, and k the number of nearest neighbors to return
-    #
-    # Output: Nearest points with respect to the distance metric
-    #          self.distance() and optionally their distances
-    #
-    def knn_insert(self, k, p, without_distance = False):
-        if self.root == None:
-            self.root = Node(p)
-            return []
-        else:
-            return self._result_(self.knn_insert_iter(k, p), without_distance)
-        
-    #
-    # Overview: get the k-nearest neighbors and their distances of an element
-    #
-    # Input: point p, and k the number of nearest neighbors to return
-    #
-    # Output: Nearest points with respect to the distance metric
-    #          self.distance() and optionally their distances
-    #
-    def knn(self, k, p, without_distance = False):
-        if self.root == None:
-            return []
-        else:
-            return self._result_(self.knn_iter(k, p), without_distance)
-
-    #
-    # Overview: find an element in the tree
-    #
-    # Input: Node p
-    # Output: True if p is found False otherwise
-    #
-    def find(self, p):
-        return self.distance(self.knn(1, p, True)[0], p) == 0
-
 
     #
     # Overview:insert an element p in to the cover tree
@@ -242,75 +202,6 @@ class CoverTree:
 
 
         return map(lambda (child, dist): (child.data, dist), result)
-
-    #
-    # Overview:get the nearest neighbor, iterative
-    #
-    # Input: query point p
-    #
-    # Output: the nearest Node 
-    #
-    def knn_iter(self, k, p):
-        Qi_p_ds = [(self.root, self.distance(p, self.root.data))]
-        for i in reversed(xrange(self.minlevel, self.maxlevel + 1)):
-            # get the children of the current Qi_p_ds and
-            # the best distance at the same time
-            Q_p_ds = self._getChildrenDist_(p, Qi_p_ds, i)
-            _, d_p_Q = self._kmin_p_ds_(k, Q_p_ds)[-1]
-
-            #create the next set
-            Qi_p_ds = [(q, d) for q, d in Q_p_ds if d <= d_p_Q + self.base**i]
-
-        #find the minimum
-        return self._kmin_p_ds_(k, Qi_p_ds)
-
-
-    #
-    # Overview: query the k-nearest points from p and then insert p in
-    # to the cover tree (at no additional cost)
-    #
-    # Input: point p
-    #
-    # Output: nothing
-    #
-    def knn_insert_iter(self, k, p):
-        Qi_p_ds = [(self.root, self.distance(p, self.root.data))]
-        i = self.maxlevel
-        found_parent = False
-        already_there = False
-        while (not already_there and not found_parent) or i >= self.minlevel:
-            # get the children of the current level
-            # and the distance of all children
-            Q_p_ds = self._getChildrenDist_(p, Qi_p_ds, i)
-            d_k = self._kmin_p_ds_(k, Q_p_ds)
-            _, d_p_Q_h = d_k[-1]
-            _, d_p_Q_l = d_k[0]
-
-            if d_p_Q_l == 0.0:    # already there, no need to insert
-                already_there = True
-            elif not already_there and \
-                    not found_parent and \
-                    d_p_Q_l > self.base**(i-1):
-                found_parent = True
-                
-            # remember potential parent
-            if self._min_ds_(Qi_p_ds) <= self.base**i:
-                parent = choice([q for q, d in Qi_p_ds if d <= self.base**i])
-                pi = i
-
-            # construct Q_i-1
-            Qi_p_ds = [(q, d) for q, d in Q_p_ds if d <= d_p_Q_h + self.base**i]
-            i -= 1
-
-        # insert p
-        if not already_there and found_parent:
-            parent.addChild(Node(p), pi)
-            # update self.minlevel
-            self.minlevel = min(self.minlevel, pi - 1)
-        
-        # find the minimum
-        return self._kmin_p_ds_(k, Qi_p_ds)
-
 
     #
     # Overview: get the children of cover set Qi at level i and the
