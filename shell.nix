@@ -15,6 +15,7 @@ let
   ];
 
   deps = pymodules ++ [
+    graphviz
   ];
 
 in
