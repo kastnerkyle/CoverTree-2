@@ -180,7 +180,7 @@ class CoverTree:
          - point :: a point
          - radius :: float - the maximum (inclusive) distance
         Output:
-         - [(n, d)] :: list of pairs (`point`, `float`) which are the point and it's distance to `p`
+         - [(i, n, d)] :: list of pairs (`index`, `point`, `float`) which are the point and it's distance to `p`
         """
 
         def containsPoint(point, radius, node, level, dist=None):
@@ -213,7 +213,7 @@ class CoverTree:
                 queue.append((next_level, child, d))
 
 
-        return map(lambda (child, dist): (child.data, dist), result)
+        return itertools.imap(lambda (child, dist): (child.idx, child.data, dist), result)
 
     #
     # Overview: get the children of cover set Qi at level i and the
