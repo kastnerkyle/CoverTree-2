@@ -53,7 +53,7 @@ def test_covertree():
     print "Building time:", b_t, "seconds"
 
     print "==== Check that all cover tree invariants are satisfied ===="
-    if ct.check_invariants():
+    if ct._check_invariants():
         print "OK!"
         passed_tests += 1
     else:
@@ -142,7 +142,7 @@ def test_covertree():
     # total_tests += 1
 
     print "==== Check that all cover tree invariants are satisfied ===="
-    if ct.check_invariants():
+    if ct._check_invariants():
         print "OK!"
         passed_tests += 1
     else:
@@ -195,12 +195,12 @@ def test_neighbors():
     for i, p in enumerate(subset):
         r = 0.01
         result = T.neighbors(p, r)
-        ns,ds = zip(*result)
+        ix,ns,ds = zip(*result)
         ns = np.array(ns)
         ds = np.array(ds)
         real = realdist[i][realdist[i] <= r]
-        # import pdb;pdb.set_trace()
 
+        assert (data[np.array(ix)] == ns).all()
         assert ds.max() <= r
         assert len(ds) == len(real)
         assert sorted(ds) == sorted(real)

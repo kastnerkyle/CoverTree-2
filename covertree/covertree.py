@@ -128,7 +128,7 @@ class CoverTree:
         if self.root == None:
             self.root = self._newNode(p)
         else:
-            self.insert_iter(p)
+            self._insert_iter(p)
 
     def _newNode(self, *args, **kws):
         kws['idx'] = self.idx
@@ -142,7 +142,7 @@ class CoverTree:
     #
     # Output: nothing
     #
-    def insert_iter(self, p):
+    def _insert_iter(self, p):
         Qi_p_ds = [(self.root, self.distance(p, self.root.data))]
         i = self.maxlevel
         while True:
@@ -266,7 +266,7 @@ class CoverTree:
     #
     def writeDotty(self, outputFile):
         outputFile.write("digraph {\n")
-        self.writeDotty_rec(outputFile, [self.root], self.maxlevel)
+        self._writeDotty_rec(outputFile, [self.root], self.maxlevel)
         outputFile.write("}")
 
 
@@ -275,7 +275,7 @@ class CoverTree:
     #
     # Input: C, i is the level
     #
-    def writeDotty_rec(self, outputFile, C, i):
+    def _writeDotty_rec(self, outputFile, C, i):
         if(i == self.minlevel):
             return
 
@@ -291,7 +291,7 @@ class CoverTree:
 
             children.extend(childs)
         
-        self.writeDotty_rec(outputFile, children, i-1)
+        self._writeDotty_rec(outputFile, children, i-1)
 
     def __str__(self):
         output = cStringIO.StringIO()
@@ -300,16 +300,16 @@ class CoverTree:
 
 
     # check if the tree satisfies all invariants
-    def check_invariants(self):
-        return self.check_nesting() and \
-            self.check_covering_tree() and \
-            self.check_seperation()
+    def _check_invariants(self):
+        return self._check_nesting() and \
+            self._check_covering_tree() and \
+            self._check_seperation()
 
 
     # check if my_invariant is satisfied:
     # C_i denotes the set of nodes at level i
     # for all i, my_invariant(C_i, C_{i-1})
-    def check_my_invariant(self, my_invariant):
+    def _check_my_invariant(self, my_invariant):
         C = [self.root]
         for i in reversed(xrange(self.minlevel, self.maxlevel + 1)):        
             C_next = sum([p.getChildren(i) for p in C], [])
@@ -322,30 +322,30 @@ class CoverTree:
     
     # check if the invariant nesting is satisfied:
     # C_i is a subset of C_{i-1}
-    def nesting(self, C, C_next, _):
+    def _nesting(self, C, C_next, _):
         return set(C) <= set(C_next)
 
-    def check_nesting(self):
-        return self.check_my_invariant(self.nesting)
+    def _check_nesting(self):
+        return self._check_my_invariant(self._nesting)
         
     
     # check if the invariant covering tree is satisfied
     # for all p in C_{i-1} there exists a q in C_i so that
     # d(p, q) <= base^i and exactly one such q is a parent of p
-    def covering_tree(self, C, C_next, i):
+    def _covering_tree(self, C, C_next, i):
         return all(unique(self.distance(p.data, q.data) <= self.base**i
                           and p in q.getChildren(i)
                           for q in C)
                    for p in C_next)
 
-    def check_covering_tree(self):
-        return self.check_my_invariant(self.covering_tree)
+    def _check_covering_tree(self):
+        return self._check_my_invariant(self._covering_tree)
 
     # check if the invariant seperation is satisfied
     # for all p, q in C_i, d(p, q) > base^i
-    def seperation(self, C, _, i):
+    def _seperation(self, C, _, i):
         return all(self.distance(p.data, q.data) > self.base**i
                    for p, q in product(C, C) if p != q)
 
-    def check_seperation(self):
-        return self.check_my_invariant(self.seperation)
+    def _check_seperation(self):
+        return self._check_my_invariant(self._seperation)
