@@ -36,10 +36,11 @@ def unique(container):
 # the Node representation of the data
 class Node:
     # data is an array of values
-    def __init__(self, data=None):
+    def __init__(self, data=None, idx=None):
         self.data = data
         self.children = {}      # dict mapping level and children
         self.parent = None
+        self.idx = idx
 
     # addChild adds a child to a particular Node and a given level i
     def addChild(self, child, i):
@@ -103,6 +104,7 @@ class CoverTree:
         self.root = root
         self.maxlevel = maxlevel
         self.minlevel = maxlevel # the minlevel will adjust automatically
+        self.idx = 0
         self.base = base
         self.jobs = jobs
         self.min_len_parallel = min_len_parallel
@@ -118,10 +120,14 @@ class CoverTree:
     #
     def insert(self, p):
         if self.root == None:
-            self.root = Node(p)
+            self.root = self._newNode(p)
         else:
             self.insert_iter(p)
 
+    def _newNode(self, *args, **kws):
+        kws['idx'] = self.idx
+        self.idx += 1
+        return Node(*args, **kws)
 
     #
     # Overview:insert an element p in to the cover tree
@@ -155,7 +161,7 @@ class CoverTree:
                 i -= 1
 
         # insert p
-        parent.addChild(Node(p), pi)
+        parent.addChild(self._newNode(p), pi)
         # update self.minlevel
         self.minlevel = min(self.minlevel, pi-1)
 
