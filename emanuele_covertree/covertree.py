@@ -12,6 +12,9 @@
 # If you use this code in your research, kindly refer to the technical
 # report.
 
+import numpy as np
+import operator
+import itertools
 from random import choice
 from heapq import nsmallest
 from itertools import product
@@ -196,6 +199,49 @@ class CoverTree:
         # update self.minlevel
         self.minlevel = min(self.minlevel, pi-1)
 
+
+    def neighbors(self, point, radius):
+        """
+        Overview: get the neighrbors of `p` within distance `r`
+
+        Input:
+         - point :: a point
+         - radius :: float - the maximum (inclusive) distance
+        Output:
+         - [(n, d)] :: list of pairs (`point`, `float`) which are the point and it's distance to `p`
+        """
+
+        def containsPoint(point, radius, node, level, dist=None):
+            if dist is None:
+                dist = self.distance(point, node.data)
+            # print level, point, dist, radius, radius + self.base**level
+            return dist <= radius + self.base**level
+
+
+        result = set()
+        queue = [(self.maxlevel, self.root, self.distance(point, self.root.data))]
+
+        while queue:
+            level, node, dist = queue.pop(0)
+
+            if not containsPoint(point, radius, node, level, dist=dist):
+                continue
+
+            if dist <= radius:
+                result.add((node, dist))
+
+            next_level = level-1
+            if next_level < self.minlevel: continue
+
+            for child in node.getChildren(next_level):
+                if not child == node:
+                    d = self.distance(point, child.data)
+                else:
+                    d = dist
+                queue.append((next_level, child, d))
+
+
+        return map(lambda (child, dist): (child.data, dist), result)
 
     #
     # Overview:get the nearest neighbor, iterative

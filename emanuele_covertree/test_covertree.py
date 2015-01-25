@@ -170,6 +170,48 @@ def test_covertree():
 
     print passed_tests, "tests out of", total_tests, "have passed"
     
+def test_neighbors():
+    import operator
+    from scipy.spatial.distance import cdist
+    import numpy as np
+
+    N = 1000
+
+    np.random.seed(42)
+    data = np.random.random((N,1))
+    # data = np.array([0, 1, 2, 3, 4, 4.5, 5, 5.5, 6, 7, 8, 9])
+    # N = len(data)
+    # data = data.reshape((N, 1))
+
+    T = CoverTree(distance)
+    for p in data:
+        T.insert(p)
+
+    subset = data[np.random.choice(np.arange(len(data)), size=1)]
+    # subset = np.array([5]).reshape((1,1))
+    realdist = cdist(subset, data)
+
+    # import pdb;pdb.set_trace()
+    for i, p in enumerate(subset):
+        r = 0.01
+        result = T.neighbors(p, r)
+        ns,ds = zip(*result)
+        ns = np.array(ns)
+        ds = np.array(ds)
+        real = realdist[i][realdist[i] <= r]
+        # import pdb;pdb.set_trace()
+
+        assert ds.max() <= r
+        assert len(ds) == len(real)
+        assert sorted(ds) == sorted(real)
+
+        # print 'N({}, {}) =\n{}'.format(p, r, ns.reshape((len(ns),)))
+        # print 'D ='
+        # print np.array(sorted(ds))
+
+    print 'Test Neighborhood query: OK'
+
 
 if __name__ == '__main__':
     test_covertree()
+    test_neighbors()
