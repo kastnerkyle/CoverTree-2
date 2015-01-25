@@ -112,6 +112,12 @@ class CoverTree:
         self.__printHash__ = set()
 
 
+    @property
+    def size(self):
+        "Number of elements in the tree"
+        return self.idx
+
+
     #
     # Overview: insert an element p into the tree
     #
