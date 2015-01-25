@@ -10,7 +10,7 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "emanuele_coverTree",
+    name = "covertree",
     version = "0.1",
     author = "Thomas Kollar",
     author_email = "tkollar@csail.mit.edu",
@@ -18,7 +18,7 @@ setup(
     license = "BSD",
     keywords = "cover tree nearest neighbor",
     url = "https://github.com/ngeiswei/PyCoverTree",
-    packages=['emanuele_covertree'],
+    packages=['covertree'],
     long_description=read('README'),
     classifiers=[
         "Development Status :: 3 - Alpha",
