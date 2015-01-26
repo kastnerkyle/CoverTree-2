@@ -135,6 +135,30 @@ class CoverTree:
         self.idx += 1
         return Node(*args, **kws)
 
+    def __iter__(self):
+        """
+        Breadth-first traversal of the nodes in the tree
+        Output:
+          - iterable of (idx, point)
+        """
+
+        queue = [(self.maxlevel, self.root)]
+
+        observed = set()
+
+        while queue:
+            lvl, node = queue.pop(0)
+            if node not in observed:
+                yield node.idx, node.data
+
+            observed.add(node)
+
+            next_lvl = lvl - 1
+            if next_lvl < self.minlevel: continue
+
+            for child in node.getChildren(next_lvl):
+                queue.append((next_lvl, child))
+
     #
     # Overview:insert an element p in to the cover tree
     #

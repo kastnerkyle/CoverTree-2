@@ -247,7 +247,19 @@ def test_contains():
     for p in np.random.random((N*0.1, 1)):
         assert not T.contains(p)
 
+def test_traverse():
+    N = 100
+
+    np.random.seed(42)
+    data = np.random.random((N,1))
+    T = CoverTree(distance)
+    for p in data: T.insert(p)
+
+    for i, p in T:
+        assert data[i] == p
+
 if __name__ == '__main__':
     test_covertree()
     test_neighbors()
     test_contains()
+    test_traverse()
