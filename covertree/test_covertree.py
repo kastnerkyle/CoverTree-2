@@ -161,6 +161,11 @@ def test_neighbors():
 
     print 'Test Neighborhood query: OK'
 
+def test_neighbors_of_empty_tree():
+    T = CoverTree(distance)
+    nn = T.neighbors(1, 1)
+    assert len(nn) == 0
+
 
 def test_knn():
     np.random.seed(42)
@@ -237,6 +242,7 @@ def test_stable_indexing():
 if __name__ == '__main__':
     test_covertree()
     test_neighbors()
+    test_neighbors_of_empty_tree()
     test_contains()
     test_traverse()
     test_extend()

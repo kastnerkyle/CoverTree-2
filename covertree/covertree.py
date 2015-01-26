@@ -228,6 +228,9 @@ class CoverTree:
             return dist <= radius + self.base**level
 
 
+        if self.root is None:
+            return []
+
         result = set()
         queue = [(self.maxlevel, self.root, self.distance(point, self.root.data))]
 
