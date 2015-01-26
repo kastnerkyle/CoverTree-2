@@ -10,6 +10,7 @@ let
     scipy
     matplotlib
     pandas
+    nose
 
     joblib
   ];
