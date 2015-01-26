@@ -204,8 +204,26 @@ def test_traverse():
     for i, p in T:
         assert data[i] == p
 
+def test_extend():
+    N = 100
+    np.random.seed(42)
+    D0 = np.random.random((N,1))
+    D1 = np.random.random((N,1))
+    T0 = CoverTree(distance, data=D0)
+    T1 = CoverTree(distance, data=D1)
+
+    T0.extend(T1)
+    for i, p in T0:
+        if i < N:
+            D = D0
+        else:
+            D = D1
+        assert p in D
+
+
 if __name__ == '__main__':
     test_covertree()
     test_neighbors()
     test_contains()
     test_traverse()
+    test_extend()

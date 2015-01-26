@@ -98,7 +98,7 @@ class CoverTree:
     #  minimum number of elements at a given level to have their
     #  distances to the element to insert or query evaluated.
     #
-    def __init__(self, distance, root = None, maxlevel = 10, base = 2,
+    def __init__(self, distance, data=None, root = None, maxlevel = 10, base = 2,
                  jobs = 1, min_len_parallel = 100):
         self.distance = distance
         self.root = root
@@ -110,6 +110,12 @@ class CoverTree:
         self.min_len_parallel = min_len_parallel
         # for printDotty
         self.__printHash__ = set()
+
+        if data is None:
+            data = []
+
+        for point in data:
+            self.insert(point)
 
 
     @property
@@ -158,6 +164,10 @@ class CoverTree:
 
             for child in node.getChildren(next_lvl):
                 queue.append((next_lvl, child))
+
+    def extend(self, tree):
+        for _, p in tree:
+            self.insert(p)
 
     #
     # Overview:insert an element p in to the cover tree
