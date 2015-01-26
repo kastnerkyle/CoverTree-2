@@ -220,6 +220,20 @@ def test_extend():
             D = D1
         assert p in D
 
+def test_stable_indexing():
+    N = 50
+    np.random.seed(42)
+    D0 = np.random.random((N, 1))
+    D1 = np.random.random((N, 1))
+
+    T = CoverTree(distance, data=D0)
+    D1_it = imap(lambda p: (None, p), D1)
+    T.extend(D1_it)
+
+    for i, p in T:
+        if i < N: D = D0
+        else:     D = D1
+        assert D[i%N] == p
 
 if __name__ == '__main__':
     test_covertree()
@@ -227,3 +241,4 @@ if __name__ == '__main__':
     test_contains()
     test_traverse()
     test_extend()
+    test_stable_indexing()
