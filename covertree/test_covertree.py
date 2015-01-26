@@ -25,7 +25,7 @@ import time
 import cPickle as pickle
 
 import operator
-from scipy.spatial.distance import cdist
+from scipy.spatial.distance import cdist, euclidean
 import numpy as np
 
 
@@ -105,7 +105,7 @@ def test_covertree():
     # print "result =", result
     ct_t = gt() - t
     print "Time to run a cover tree " + str(k) + "-nn query:", ct_t, "seconds"
-    results = list(imap(operator.itemgetter(0), results))
+    results = list(imap(operator.itemgetter(1), results))
     
     if all([distance(r, nr) != 0 for r, nr in zip(results, naive_results)]):
         print "NOT OK!"
@@ -214,6 +214,22 @@ def test_neighbors():
         # print np.array(sorted(ds))
 
     print 'Test Neighborhood query: OK'
+
+
+def test_knn():
+    np.random.seed(42)
+    n = 10
+    k = 1
+    data = np.arange(n)
+    T = CoverTree(euclidean, data)
+
+    for p in data:
+        nns = list(T.knn(p, 1))
+        assert len(nns) == 1
+        idx, nn, d = nns[0]
+        print p, nn, d
+        assert nn == p
+        assert d == 0
 
 
 def test_contains():
