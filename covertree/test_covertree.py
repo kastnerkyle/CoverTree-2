@@ -60,12 +60,7 @@ def test_covertree():
     print "Building time:", b_t, "seconds"
 
     print "==== Check that all cover tree invariants are satisfied ===="
-    if ct._check_invariants():
-        print "OK!"
-        passed_tests += 1
-    else:
-        print "NOT OK!"
-    total_tests += 1
+    assert ct._check_invariants()
     
     print "==== Write test1.dot, dotty file of the built tree ===="
     with open("test1.dot", "w") as testDottyFile1:
@@ -107,19 +102,8 @@ def test_covertree():
     print "Time to run a cover tree " + str(k) + "-nn query:", ct_t, "seconds"
     results = list(imap(operator.itemgetter(1), results))
     
-    if all([distance(r, nr) != 0 for r, nr in zip(results, naive_results)]):
-        print "NOT OK!"
-        print results
-        print "!="
-        print naive_results
-    else:
-        print "OK!"
-        print results
-        print "=="
-        print naive_results
-        print "Cover tree query is", n_t/ct_t, "faster"
-        passed_tests += 1
-    total_tests += 1
+    assert all([distance(r, nr) == 0 for r, nr in zip(results, naive_results)])
+    print "Cover tree query is", n_t/ct_t, "faster"
 
 
     # you need pylab for that
@@ -128,48 +112,10 @@ def test_covertree():
     # plot([naive_results[0][0]], [naive_results[0][1]], 'y^')
     # plot([results[0][0]], [results[0][1]], 'mo')
 
-    # # test knn_insert
-    # print "==== Test knn_insert method ===="
-    # t = gt()
-    # results2 = ct.knn_insert(query, k)
-    # ct_t = gt() - t
-    # print "Time to run a cover tree " + str(k) + "-nn query:", ct_t, "seconds"
-    
-    # if all([distance(r, nr) != 0 for r, nr in zip(results2, naive_results)]):
-    #     print "NOT OK!"
-    #     print results2
-    #     print "!="
-    #     print naive_results
-    # else:
-    #     print "OK!"
-    #     print results2
-    #     print "=="
-    #     print naive_results
-    #     print "Cover tree query is", n_t/ct_t, "faster"
-    #     passed_tests += 1
-    # total_tests += 1
-
-    print "==== Check that all cover tree invariants are satisfied ===="
-    if ct._check_invariants():
-        print "OK!"
-        passed_tests += 1
-    else:
-        print "NOT OK!"
-    total_tests += 1
-
     print "==== Write test2.dot, dotty file of the built tree after knn_insert ===="
     with open("test2.dot", "w") as testDottyFile2:
         ct.writeDotty(testDottyFile2)
         
-    # # test find
-    # print "==== Test cover tree find method ===="
-    # if ct.find(query):
-    #     print "OK!"
-    #     passed_tests += 1
-    # else:
-    #     print "NOT OK!"
-    # total_tests += 1
-
     # printDotty prints the tree that was generated in dotty format,
     # for more info on the format, see http://graphviz.org/
     # ct.printDotty()
