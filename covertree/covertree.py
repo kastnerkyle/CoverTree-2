@@ -14,9 +14,9 @@
 
 import numpy as np
 import operator
-import itertools
+from itertools import izip, imap
 from random import choice
-from heapq import nsmallest
+from heapq import nsmallest, heappush, heappop
 from itertools import product
 try:
     from collections import Counter
@@ -213,7 +213,74 @@ class CoverTree:
                 queue.append((next_level, child, d))
 
 
-        return itertools.imap(lambda (child, dist): (child.idx, child.data, dist), result)
+        return imap(lambda (child, dist): (child.idx, child.data, dist), result)
+
+
+    def contains(self, point, eps=0.00001):
+        """
+        Ask if the cover tree contains a given point
+
+        Input:
+          - point :: the query point  -- the point to search for
+          - eps   :: double           -- epsilon for distance comparison
+
+        Output:
+          - found :: bool             -- indicates presence of point in Cover Tree
+        """
+
+        nn = self.neighbors(point, eps)
+        nn = list(nn) # force the lazy calculation
+
+        if len(nn) == 1:
+            return True
+        elif len(nn) == 0:
+            return False
+        else: raise ValueError, 'Found multiple results for {} with eps={}: {}'.format(point, eps, nn)
+
+    def knn(self, point, k):
+        """
+        Get the `k` nearest neighbors of `point`
+
+        Input:
+          - point :: a point
+          - k     :: positive int
+
+        Output:
+          - [(i, p, d)] :: list of length `k` of the index, point, and distance in the CT closest to input `point`
+        """
+
+        Qi = [(self.root, self.distance(point, self.root.data))]
+
+        for level in reversed(xrange(self.minlevel, self.maxlevel+1)):
+            Q = []
+            for node, dist in Qi:
+                for child in node.getChildren(level-1):
+                    d = self.distance(point, child.data)
+                    heappush(Q, (d, child))
+            Q = [heappop(Q) for _ in izip(xrange(k), xrange(len(Q)))]
+            d_min_Q = Q[-1][0]
+
+            Qi = []
+            for dist, child in Q:
+                if dist <= d_min_Q + self.base**level:
+                    Qi.append((child, dist))
+
+
+        # return nearest neighbors
+        cmpDist = operator.itemgetter(1)
+
+        def get_knn(Q):
+            if k == 1: # scan: O(n)
+                return [max(Qi, key=cmpDist)]
+            elif k < 19: # heap: O(nlogn), faster than sort for small n
+                return nsmallest(k, Qi)
+            else: # O(nlogn)
+                return sorted(Qi, key=cmpDist)[:k]
+
+        knn = get_knn(Qi)
+        knn = imap(lambda (node, dist): (node.data, dist), knn)
+        knn = sorted(knn, key=cmpDist)
+        return knn
 
     #
     # Overview: get the children of cover set Qi at level i and the

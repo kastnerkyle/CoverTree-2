@@ -16,11 +16,18 @@
 
 from covertree import CoverTree
 from naiveknn import knn
+from itertools import imap, izip
+import operator
 # from pylab import plot, show
 from numpy import subtract, dot, sqrt
 from random import random, seed
 import time
 import cPickle as pickle
+
+import operator
+from scipy.spatial.distance import cdist
+import numpy as np
+
 
 def distance(p, q):
     # print "distance"
@@ -92,26 +99,27 @@ def test_covertree():
     n_t = gt() - t
     print "Time to run a naive " + str(k) + "-nn query:", n_t, "seconds"
 
-    #cover-tree nearest neighbor
-    # t = gt()
-    # results = ct.knn(k, query, True)
-    # # print "result =", result
-    # ct_t = gt() - t
-    # print "Time to run a cover tree " + str(k) + "-nn query:", ct_t, "seconds"
+    # cover-tree nearest neighbor
+    t = gt()
+    results = ct.knn(query, k)
+    # print "result =", result
+    ct_t = gt() - t
+    print "Time to run a cover tree " + str(k) + "-nn query:", ct_t, "seconds"
+    results = list(imap(operator.itemgetter(0), results))
     
-    # if all([distance(r, nr) != 0 for r, nr in zip(results, naive_results)]):
-    #     print "NOT OK!"
-    #     print results
-    #     print "!="
-    #     print naive_results
-    # else:
-    #     print "OK!"
-    #     print results
-    #     print "=="
-    #     print naive_results
-    #     print "Cover tree query is", n_t/ct_t, "faster"
-    #     passed_tests += 1
-    # total_tests += 1
+    if all([distance(r, nr) != 0 for r, nr in zip(results, naive_results)]):
+        print "NOT OK!"
+        print results
+        print "!="
+        print naive_results
+    else:
+        print "OK!"
+        print results
+        print "=="
+        print naive_results
+        print "Cover tree query is", n_t/ct_t, "faster"
+        passed_tests += 1
+    total_tests += 1
 
 
     # you need pylab for that
@@ -123,7 +131,7 @@ def test_covertree():
     # # test knn_insert
     # print "==== Test knn_insert method ===="
     # t = gt()
-    # results2 = ct.knn_insert(k, query, True)
+    # results2 = ct.knn_insert(query, k)
     # ct_t = gt() - t
     # print "Time to run a cover tree " + str(k) + "-nn query:", ct_t, "seconds"
     
@@ -171,10 +179,6 @@ def test_covertree():
     print passed_tests, "tests out of", total_tests, "have passed"
     
 def test_neighbors():
-    import operator
-    from scipy.spatial.distance import cdist
-    import numpy as np
-
     N = 1000
 
     np.random.seed(42)
@@ -212,6 +216,22 @@ def test_neighbors():
     print 'Test Neighborhood query: OK'
 
 
+def test_contains():
+    N = 100
+
+    np.random.seed(42)
+    data = np.random.random((N,1))
+    T = CoverTree(distance)
+    for p in data: T.insert(p)
+
+    points = 10 + np.random.random((N*0.1, 1))
+    for p in points:
+        assert not T.contains(p)
+
+    for p in np.random.random((N*0.1, 1)):
+        assert not T.contains(p)
+
 if __name__ == '__main__':
     test_covertree()
     test_neighbors()
+    test_contains()
