@@ -165,8 +165,12 @@ class CoverTree:
             for child in node.getChildren(next_lvl):
                 queue.append((next_lvl, child))
 
-    def extend(self, tree):
-        for _, p in tree:
+    def extend(self, iterable):
+        if isinstance(iterable, CoverTree):
+            getter = operator.itemgetter(1)
+        else:
+            getter = lambda x: x
+        for p in imap(getter, iterable):
             self.insert(p)
 
     #

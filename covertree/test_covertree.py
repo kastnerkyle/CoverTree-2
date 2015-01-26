@@ -227,8 +227,7 @@ def test_stable_indexing():
     D1 = np.random.random((N, 1))
 
     T = CoverTree(distance, data=D0)
-    D1_it = imap(lambda p: (None, p), D1)
-    T.extend(D1_it)
+    T.extend(D1)
 
     for i, p in T:
         if i < N: D = D0
