@@ -14,10 +14,11 @@
 
 import numpy as np
 import operator
-from itertools import izip, imap
 from random import choice
 from heapq import nsmallest, heappush, heappop
 from itertools import product
+from collections import Counter
+'''
 try:
     from collections import Counter
 except ImportError: # Counter is not available in Python before v2.7
@@ -27,6 +28,7 @@ try:
 except ImportError:
     pass
 import cStringIO
+'''
 
 # method that returns true iff only one element of the container is True
 def unique(container):
@@ -170,7 +172,7 @@ class CoverTree:
             getter = operator.itemgetter(1)
         else:
             getter = lambda x: x
-        for p in imap(getter, iterable):
+        for p in map(getter, iterable):
             self.insert(p)
 
     #
@@ -254,7 +256,7 @@ class CoverTree:
                 queue.append((next_level, child, d))
 
 
-        return imap(lambda (child, dist): (child.idx, child.data, dist), result)
+        return map(lambda x: (x[0].idx, x[0].data, x[1]), result)
 
 
     def contains(self, point, eps=0.00001):
@@ -276,7 +278,7 @@ class CoverTree:
             return True
         elif len(nn) == 0:
             return False
-        else: raise ValueError, 'Found multiple results for {} with eps={}: {}'.format(point, eps, nn)
+        else: raise(ValueError, 'Found multiple results for {} with eps={}: {}'.format(point, eps, nn))
 
     def knn(self, p, k):
         """
@@ -291,11 +293,11 @@ class CoverTree:
         """
 
         Qi_p_ds = [(self.root, self.distance(p, self.root.data))]
-        for i in reversed(xrange(self.minlevel, self.maxlevel+1)):
+        for i in reversed(range(self.minlevel, self.maxlevel+1)):
             Q_p_ds = self._getChildrenDist_(p, Qi_p_ds, i)
             _, d_p_Q = self._kmin_p_ds_(k, Q_p_ds)[-1]
             Qi_p_ds = [(q, d) for q, d in Q_p_ds if d <= d_p_Q + self.base**i]
-        res = imap(lambda (n, d): (n.idx, n.data, d), Qi_p_ds)
+        res = map(lambda x: (x[0].idx, x[0].data, x[1]), Qi_p_ds)
         return nsmallest(k, res, key=operator.itemgetter(2))
 
 
@@ -311,13 +313,7 @@ class CoverTree:
     #
     def _getChildrenDist_(self, p, Qi_p_ds, i):
         Q = sum([n.getOnlyChildren(i) for n, _ in Qi_p_ds], [])
-        if 'Parallel' in dir() and self.jobs > 1 and len(Q) >= self.min_len_parallel:
-            df = self.distance
-            ds = Parallel(n_jobs = self.jobs)(delayed(df)(p, q.data) for q in Q)
-            Q_p_ds = zip(Q, ds)
-        else:
-            Q_p_ds = [(q, self.distance(p, q.data)) for q in Q]
-        
+        Q_p_ds = [(q, self.distance(p, q.data)) for q in Q]
         return Qi_p_ds + Q_p_ds
 
     #
@@ -377,10 +373,12 @@ class CoverTree:
         
         self._writeDotty_rec(outputFile, children, i-1)
 
+    '''
     def __str__(self):
         output = cStringIO.StringIO()
         self.writeDotty(output)
         return output.getvalue()
+    '''
 
 
     # check if the tree satisfies all invariants
@@ -395,10 +393,10 @@ class CoverTree:
     # for all i, my_invariant(C_i, C_{i-1})
     def _check_my_invariant(self, my_invariant):
         C = [self.root]
-        for i in reversed(xrange(self.minlevel, self.maxlevel + 1)):        
+        for i in reversed(range(self.minlevel, self.maxlevel + 1)):
             C_next = sum([p.getChildren(i) for p in C], [])
             if not my_invariant(C, C_next, i):
-                print "At level", i, "the invariant", my_invariant, "is false"
+                print("At level", i, "the invariant", my_invariant, "is false")
                 return False
             C = C_next
         return True
