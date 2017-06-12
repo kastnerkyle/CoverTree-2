@@ -2,7 +2,7 @@
 
 This is a repurposing of previous code to provide visualizations of the cover tree algorithm using Mathbox 2 (code snippets due to @znah).
 
-[Run the example on the nbviewer service.](https://nbviewer.jupyter.org/github/n8epi/covertree/blob/jupyter/examples/examples.ipynb?flush_cache=true)
+[Run the example on the nbviewer service.](https://nbviewer.jupyter.org/github/n8epi/CoverTree/blob/master/examples/examples.ipynb?flush_cache=true)
 
 ## Buid info
 
