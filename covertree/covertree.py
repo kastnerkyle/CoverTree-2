@@ -96,7 +96,7 @@ class CoverTree:
     #  (e.g. base^(maxlevel) should be our maximum number), just as
     #  base^(minlevel) should be the minimum distance between Nodes.
     #
-    #  In case parallel is enbaled (jobs > 1), min_len_parallel is the
+    #  In case parallel is enabled (jobs > 1), min_len_parallel is the
     #  minimum number of elements at a given level to have their
     #  distances to the element to insert or query evaluated.
     #
@@ -214,7 +214,7 @@ class CoverTree:
 
     def neighbors(self, point, radius):
         """
-        Overview: get the neighrbors of `p` within distance `r`
+        Overview: get the neighbors of `p` within distance `r`
 
         Input:
          - point :: a point

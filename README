@@ -1,11 +1,10 @@
-Author: Thomas Kollar
-Date: 11/20/08
+## Cover tree visualizations
 
-Requirements:
-matplotlib: http://matplotlib.sourceforge.net/
-scipy: http://www.scipy.org/
+This is a repurposing of previous code to provide visualizations of the cover tree algorithm using Mathbox 2 (code snippets due to @znah).
 
-Additionally, make sure to put these files in 
+## Buid info
+
+Make sure to put these files in
 your path:
 %export PYTHONPATH=$PYTHONPATH:yourdirectory
 

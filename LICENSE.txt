@@ -1,5 +1,6 @@
 Copyright (c) 2007, Thomas Kollar <tkollar@csail.mit.edu>
 Copyright (c) 2011, Nil Geisweiller <ngeiswei@gmail.com>
+Copyright (c) 2017, Nate Strawn <nate.strawn@georgetown.edu>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

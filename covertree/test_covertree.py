@@ -19,7 +19,7 @@ from naiveknn import knn
 
 # from pylab import plot, show
 from numpy import subtract, dot, sqrt
-from random import random, seed
+import numpy.random as rd
 import time
 
 import operator
@@ -35,7 +35,6 @@ def distance(p, q):
     return sqrt(dot(x, x))
 
 def test_covertree():
-    seed(1)
 
     total_tests = 0
     passed_tests = 0
@@ -44,7 +43,7 @@ def test_covertree():
 
     k = 5
     
-    pts = [(random(), random()) for _ in range(n_points)]
+    pts = rd.random((n_points, 2))
 
     gt = time.time
 
