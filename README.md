@@ -4,7 +4,7 @@ This is a repurposing of previous code to provide visualizations of the cover tr
 
 [Run the example on the nbviewer service.](https://nbviewer.jupyter.org/github/n8epi/CoverTree/blob/master/examples/examples.ipynb?flush_cache=true)
 
-## Buid info
+## Build info
 
 Make sure to put these files in
 your path:
